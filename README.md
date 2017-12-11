@@ -1,3 +1,7 @@
+# @TODO: write proper readme for the new fork repo
+--------------------------------------------------------------------------------
+
+
 # gnome-colors
 A complete, multi-colored suite of themes and icons for Linux.
 

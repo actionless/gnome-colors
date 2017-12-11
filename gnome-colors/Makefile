@@ -99,7 +99,7 @@ $(foreach theme,$(THEMES),$(eval $(call theme_template,$(theme))))
 define png_template
 $(1)/$(2).png: src/$(2).svg themes/$(1)
 	@if test ! -d $$(dir $$@); then mkdir -p $$(dir $$@); echo "mkdir -p $$(dir $$@)"; fi
-	sed "$$($(1)_$(3)_sed)" $$< | inkscape --without-gui -f /dev/stdin -e "$$(CURDIR)/$$@"
+	sed "$$($(1)_$(3)_sed)" $$< | inkscape --without-gui -f /dev/stdin -e "$$(CURDIR)/$$@" || true
 endef
 
 define svg_template
@@ -116,7 +116,7 @@ $(foreach theme,$(THEMES),$(foreach color,$(call COLORS,$(theme)), \
 define 24_template
 $(1)/24x24/$(2): $(1)/22x22/$(2)
 	@if test ! -d $$(dir $$@); then mkdir -p $$(dir $$@); echo "mkdir -p $$(dir $$@)"; fi
-	convert -bordercolor Transparent -border 1x1 $$< $$@
+	convert -bordercolor Transparent -border 1x1 $$< $$@ || true
 endef
 
 define link_template

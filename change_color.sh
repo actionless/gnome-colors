@@ -113,6 +113,6 @@ MediumBase=#${medium_base}
 DarkStroke=#${dark_stroke}
 EOF
 
-make "${OUTPUT_THEME_NAME}"
+make -j $(nproc) "${OUTPUT_THEME_NAME}"
 cp -r ./gnome-colors-common/* "${output_dir}"/
 cp -r ./"${OUTPUT_THEME_NAME}"/* "${output_dir}"/

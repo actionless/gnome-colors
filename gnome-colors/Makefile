@@ -99,7 +99,7 @@ $(foreach theme,$(THEMES),$(eval $(call theme_template,$(theme))))
 define png_template
 $(1)/$(2).png: src/$(2).svg themes/$(1)
 	@if test ! -d $$(dir $$@); then mkdir -p $$(dir $$@); echo "mkdir -p $$(dir $$@)"; fi
-	sed "$$($(1)_$(3)_sed)" $$< | inkscape --without-gui -f /dev/stdin -e "$$(CURDIR)/$$@" || true
+	sed "$$($(1)_$(3)_sed)" $$< | rsvg-convert --format=png -o "$$(CURDIR)/$$@" || sleep 100
 endef
 
 define svg_template

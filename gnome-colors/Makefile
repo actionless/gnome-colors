@@ -1,3 +1,5 @@
+USE_INKSCAPE = 0
+
 PROJECT := gnome-colors-src
 DOCS := AUTHORS ChangeLog COPYING README
 SIZES := 16x16 22x22 24x24 32x32
@@ -5,11 +7,16 @@ THEME_FILES := $(filter-out %~,$(wildcard themes/*))
 LINKS_FILE := links
 DIST_EXTRA := Makefile Palette.svg
 
+ifeq ($(USE_INKSCAPE), 1)
+INKSCAPE := $(shell which inkscape)
+$(info using `inkscape`)
+else
 RENDERSVG := $(shell which rendersvg)
 ifeq ($(RENDERSVG),)
 $(info `resvg` not found, using `rsvg-convert` instead)
 else
 $(info using `resvg`)
+endif
 endif
 
 gnome-colors_DIST_COMMON := yes
@@ -106,7 +113,9 @@ $(foreach theme,$(THEMES),$(eval $(call theme_template,$(theme))))
 define png_template
 $(1)/$(2).png: src/$(2).svg themes/$(1)
 	@if test ! -d $$(dir $$@); then mkdir -p $$(dir $$@); echo "mkdir -p $$(dir $$@)"; fi
-ifneq ($(RENDERSVG),)
+ifneq ($(INKSCAPE),)
+	sed "$$($(1)_$(3)_sed)" $$< | $(INKSCAPE) --without-gui -f /dev/stdin -e "$$(CURDIR)/$$@"
+else ifneq ($(RENDERSVG),)
 	sed "$$($(1)_$(3)_sed)" $$< > "$$(CURDIR)/$$@".template.svg
 	$(RENDERSVG) "$$(CURDIR)/$$@".template.svg "$$(CURDIR)/$$@"
 	$(RM) "$$(CURDIR)/$$@".template.svg

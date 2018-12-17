@@ -5,6 +5,13 @@ THEME_FILES := $(filter-out %~,$(wildcard themes/*))
 LINKS_FILE := links
 DIST_EXTRA := Makefile Palette.svg
 
+RENDERSVG := $(shell which rendersvg)
+ifeq ($(RENDERSVG),)
+$(info `resvg` not found, using `rsvg-convert` instead)
+else
+$(info using `resvg`)
+endif
+
 gnome-colors_DIST_COMMON := yes
 $(PROJECT)_DIST_COMMON := yes
 
@@ -99,7 +106,13 @@ $(foreach theme,$(THEMES),$(eval $(call theme_template,$(theme))))
 define png_template
 $(1)/$(2).png: src/$(2).svg themes/$(1)
 	@if test ! -d $$(dir $$@); then mkdir -p $$(dir $$@); echo "mkdir -p $$(dir $$@)"; fi
-	sed "$$($(1)_$(3)_sed)" $$< | rsvg-convert --format=png -o "$$(CURDIR)/$$@" || sleep 100
+ifneq ($(RENDERSVG),)
+	sed "$$($(1)_$(3)_sed)" $$< > "$$(CURDIR)/$$@".template.svg
+	$(RENDERSVG) "$$(CURDIR)/$$@".template.svg "$$(CURDIR)/$$@"
+	$(RM) "$$(CURDIR)/$$@".template.svg
+else
+	sed "$$($(1)_$(3)_sed)" $$< | rsvg-convert --format=png -o "$$(CURDIR)/$$@"
+endif
 endef
 
 define svg_template

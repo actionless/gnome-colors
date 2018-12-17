@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090
 set -ueo pipefail
-root="$(readlink -f $(dirname "$0"))"
+root="$(readlink -f "$(dirname "$0")")"
 
 
 print_usage() {
@@ -9,8 +10,8 @@ usage:
 	$0 [-o OUTPUT_THEME_NAME] PRESET_NAME_OR_PATH
 
 examples:
-       $0 monovedek
-       $0 -o my-theme-name ./colors/retro/twg"
+	$0 monovedek
+	$0 -o my-theme-name ./colors/retro/twg"
 	exit 1
 }
 
@@ -30,22 +31,22 @@ darker_channel() {
 
 
 darker() {
-	hexinput=$(echo $1 | tr '[:lower:]' '[:upper:]')
+	hexinput=$(echo "$1" | tr '[:lower:]' '[:upper:]')
 	light_delta=${2-10}
 
-    a=`echo $hexinput | cut -c-2`
-    b=`echo $hexinput | cut -c3-4`
-    c=`echo $hexinput | cut -c5-6`
+	a=$(echo "$hexinput" | cut -c-2)
+	b=$(echo "$hexinput" | cut -c3-4)
+	c=$(echo "$hexinput" | cut -c5-6)
 
-	r=$(darker_channel ${a} ${light_delta})
-	g=$(darker_channel ${b} ${light_delta})
-	b=$(darker_channel ${c} ${light_delta})
+	r=$(darker_channel "${a}" "${light_delta}")
+	g=$(darker_channel "${b}" "${light_delta}")
+	b=$(darker_channel "${c}" "${light_delta}")
 
-	printf '%02x%02x%02x\n' ${r} ${g} ${b}
+	printf '%02x%02x%02x\n' "${r}" "${g}" "${b}"
 }
 
 
-while [[ $# > 0 ]]
+while [[ $# -gt 0 ]]
 do
 	case ${1} in
 		-h|--help)
@@ -74,15 +75,15 @@ fi
 
 if [[ ${THEME} == */* ]] || [[ ${THEME} == *.* ]] ; then
 	source "$THEME"
-	THEME=$(basename ${THEME})
+	THEME=$(basename "${THEME}")
 else
 	source "${root}/colors/$THEME"
 fi
 
 
-light_folder_base_fallback="$(darker ${SEL_BG} -10)"
-medium_base_fallback="$(darker ${SEL_BG} 37)"
-dark_stroke_fallback="$(darker ${SEL_BG} 50)"
+light_folder_base_fallback="$(darker "${SEL_BG}" -10)"
+medium_base_fallback="$(darker "${SEL_BG}" 37)"
+dark_stroke_fallback="$(darker "${SEL_BG}" 50)"
 
 light_folder_base="${ICONS_LIGHT_FOLDER-$light_folder_base_fallback}"
 light_base="${ICONS_LIGHT-$SEL_BG}"
@@ -113,6 +114,6 @@ MediumBase=#${medium_base}
 DarkStroke=#${dark_stroke}
 EOF
 
-make -j $(nproc) "${OUTPUT_THEME_NAME}"
+make -j "$(nproc)" "${OUTPUT_THEME_NAME}"
 cp -r ./gnome-colors-common/* "${output_dir}"/
 cp -r ./"${OUTPUT_THEME_NAME}"/* "${output_dir}"/

@@ -1,4 +1,5 @@
 USE_INKSCAPE = 0
+USE_RESVG = 0
 
 PROJECT := gnome-colors-src
 DOCS := AUTHORS ChangeLog COPYING README
@@ -11,11 +12,13 @@ ifeq ($(USE_INKSCAPE), 1)
 INKSCAPE := $(shell which inkscape)
 $(info using `inkscape`)
 else
+ifeq ($(USE_RESVG), 1)
 RENDERSVG := $(shell which rendersvg)
 ifeq ($(RENDERSVG),)
 $(info `resvg` not found, using `rsvg-convert` instead)
 else
 $(info using `resvg`)
+endif
 endif
 endif
 

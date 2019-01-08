@@ -93,7 +93,6 @@ dark_stroke="${ICONS_DARK-$dark_stroke_fallback}"
 
 OUTPUT_THEME_NAME="${OUTPUT_THEME_NAME-oomox-$THEME}"
 output_dir="${HOME}/.icons/${OUTPUT_THEME_NAME}"
-mkdir -p "${output_dir}" || true
 
 tmp_dir="$(mktemp -d)"
 function post_clean_up {
@@ -115,5 +114,9 @@ DarkStroke=#${dark_stroke}
 EOF
 
 make -j "$(nproc)" "${OUTPUT_THEME_NAME}"
+if [[ -d "${output_dir}" ]] ; then
+	rm -fr "${output_dir}"
+fi
+mkdir -p "${output_dir}"
 cp -r ./gnome-colors-common/* "${output_dir}"/
 cp -r ./"${OUTPUT_THEME_NAME}"/* "${output_dir}"/
